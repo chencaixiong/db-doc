@@ -77,7 +77,11 @@ func getDbInfo(db *sql.DB) model.DbInfo {
 		key, value string
 	)
 	// 数据库版本
-	rows, err = db.Query("select @@version;")
+	if dbConfig.DbType == 3 {
+		rows, err = db.Query("select version();")
+	}else {
+		rows, err = db.Query("select @@version;")
+	}
 	if err != nil {
 		fmt.Println(err)
 	}
