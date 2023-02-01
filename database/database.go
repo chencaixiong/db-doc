@@ -91,17 +91,29 @@ func getDbInfo(db *sql.DB) model.DbInfo {
 	}
 	info.Version = value
 	// 字符集
-	rows, err = db.Query("show variables like '%character_set_server%';")
+	if dbConfig.DbType == 3 {
+		rows, err = db.Query("show server_encoding;")
+	}else {
+		rows, err = db.Query("show variables like '%character_set_server%';")
+	}
 	if err != nil {
 		fmt.Println(err)
 	}
 	defer rows.Close()
 	for rows.Next() {
-		rows.Scan(&key, &value)
+		if dbConfig.DbType == 3 {
+			rows.Scan(&key, &value)
+		}else {
+			rows.Scan(&key, &value)
+		}
 	}
 	info.Charset = value
 	// 排序规则
-	rows, err = db.Query("show variables like 'collation_server%';")
+	if dbConfig.DbType == 3 {
+		rows, err = db.Query("select collname,collcollate from pg_collation where collname='en_US.utf8';")
+	}else {
+		rows, err = db.Query("show variables like 'collation_server%';")
+	}
 	if err != nil {
 		fmt.Println(err)
 	}
