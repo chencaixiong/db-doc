@@ -102,7 +102,7 @@ func getDbInfo(db *sql.DB) model.DbInfo {
 	defer rows.Close()
 	for rows.Next() {
 		if dbConfig.DbType == 3 {
-			rows.Scan(&key, &value)
+			rows.Scan(&value)
 		}else {
 			rows.Scan(&key, &value)
 		}
